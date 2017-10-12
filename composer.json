@@ -1,0 +1,38 @@
+{
+  "name": "robier/sitemaps",
+  "type": "library",
+  "description": "Library for generating sitemaps",
+  "homepage": "https://github.com/robier/sitemaps",
+  "license": "MIT",
+  "prefer-stable" : true,
+  "authors": [
+    {
+      "name": "Robert Premar",
+      "email": "robert.premar@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.1"
+  },
+  "autoload": {
+    "psr-4": {"Robier\\Sitemaps\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"Robier\\Sitemaps\\Tests\\Unit\\": "tests/src/unit/"}
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.1",
+    "friendsofphp/php-cs-fixer": "^2.3",
+    "codeclimate/php-test-reporter": "^0.4.4"
+  },
+  "scripts": {
+    "lint" : "vendor/bin/php-cs-fixer fix",
+    "tests:clover" : "vendor/bin/phpunit --coverage-clover=\"tests/coverage/clover.xml\"",
+    "send:coverage" : "vendor/bin/test-reporter --coverage-report=\"tests/coverage/clover.xml\"",
+    "docker:build" : "tests/docker/build",
+    "docker:tests" : "tests/docker/run vendor/bin/phpunit",
+    "docker:tests:coverage" : "tests/docker/run vendor/bin/phpunit --coverage-text --colors=never",
+    "docker:tests:coverage-html" : "tests/docker/run vendor/bin/phpunit --coverage-html=\"tests/coverage/html\""
+  }
+}

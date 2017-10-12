@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+
+function enterDocker
+{
+    local -r dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+    local -r projectRoot=$(readlink -f "${dir}/../../");
+
+    local -r applicationTagName=$(cat ${dir}/tagName);
+
+    { if [ -z $(docker ps --no-trunc --filter name=^/${applicationTagName}$ -q) ]; then
+        >&2 echo "[E] Docker container with name ${applicationTagName} not found!";
+        exit 1;
+    fi }
+
+    docker exec -it ${applicationTagName} sh
+}
+
+enterDocker;
