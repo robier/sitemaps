@@ -2,7 +2,7 @@
 
 namespace Robier\Sitemaps\Processor;
 
-class PassThought implements Contract
+class PassThrough implements Contract
 {
     protected $processor;
 
