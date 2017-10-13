@@ -2,6 +2,8 @@
 
 namespace Robier\Sitemaps\File;
 
+use DateTimeInterface;
+
 class SiteMap implements Contract
 {
     protected $group;
@@ -16,9 +18,9 @@ class SiteMap implements Contract
      * @param string      $path
      * @param string      $url
      * @param string      $name
-     * @param string|null $lastModified
+     * @param string|DateTimeInterface $lastModified
      */
-    public function __construct(string $group, string $path, string $url, string $name, string $lastModified = null)
+    public function __construct(string $group, string $path, string $url, string $name, DateTimeInterface $lastModified = null)
     {
         $this->group = $group;
         $this->lastModified = $lastModified;
@@ -28,9 +30,9 @@ class SiteMap implements Contract
     }
 
     /**
-     * @return null|string
+     * @return null|DateTimeInterface
      */
-    public function lastModified(): ?string
+    public function lastModified(): ?DateTimeInterface
     {
         return $this->lastModified;
     }

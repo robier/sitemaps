@@ -3,6 +3,7 @@
 namespace Robier\Sitemaps\Driver\Writer;
 
 use Robier\Sitemaps\File\SiteMap;
+use Robier\Sitemaps\Location;
 use XMLWriter;
 
 class XML
@@ -27,13 +28,14 @@ class XML
         $xml->endDocument();
     }
 
-    public function writeSiteMap(string $path, \Generator $locations): void
+    public function writeSiteMap(string $path, \Generator $locations, string $dateFormat): void
     {
         $xml = $this->new($path);
 
         $xml->startElement('urlset');
         $xml->writeAttribute('xmlns', static::SCHEMA);
 
+        /** @var Location $location */
         foreach ($locations as $location) {
             $xml->startElement('url');
             $xml->writeElement('loc', $location->url());
@@ -47,7 +49,7 @@ class XML
             }
 
             if ($location->lastModified()) {
-                $xml->writeElement('lastmod', $location->lastModified());
+                $xml->writeElement('lastmod', $location->lastModified()->format($dateFormat));
             }
 
             $xml->endElement();
@@ -56,7 +58,7 @@ class XML
         $this->close($xml);
     }
 
-    public function writeSiteMapIndex(string $path, \Generator $siteMaps): \Generator
+    public function writeSiteMapIndex(string $path, \Generator $siteMaps, string $dateFormat): \Generator
     {
         $xml = $this->new($path);
 
@@ -69,7 +71,7 @@ class XML
             $xml->writeElement('loc', $siteMap->fullUrl());
 
             if ($siteMap->lastModified()) {
-                $xml->writeElement('lastmod', $siteMap->lastModified());
+                $xml->writeElement('lastmod', $siteMap->lastModified()->format($dateFormat));
             }
 
             $xml->endElement();

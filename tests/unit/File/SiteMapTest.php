@@ -3,29 +3,36 @@
 namespace Robier\Sitemaps\Tests\Unit\File;
 
 use PHPUnit\Framework\TestCase;
-use Robier\Sitemaps\File\SiteMapIndex;
+use Robier\Sitemaps\File\SiteMap;
 
-class SiteMapIndexTest extends TestCase
+class SiteMapTest extends TestCase
 {
     public function dataProviderForGetters(): \Generator
     {
-        yield ['/tmp/test/', 'http://google.com/', 'test-0'];
+        $dateTime = new \DateTime();
+
+        yield ['test', '/tmp/test/', 'http://google.com/', 'test-0', null];
+        yield ['test', '/tmp/test/', 'http://google.com/', 'test-0', $dateTime];
     }
 
     /**
      * @dataProvider dataProviderForGetters
      *
+     * @param $group
      * @param $path
      * @param $url
      * @param $name
+     * @param $lastModified
      */
-    public function testGetters($path, $url, $name): void
+    public function testGetters($group, $path, $url, $name, $lastModified): void
     {
-        $unit = new SiteMapIndex($path, $url, $name);
+        $unit = new SiteMap($group, $path, $url, $name, $lastModified);
 
+        $this->assertEquals($group, $unit->group());
         $this->assertEquals($path, $unit->path());
         $this->assertEquals($url, $unit->url());
         $this->assertEquals($name, $unit->name());
+        $this->assertEquals($lastModified, $unit->lastModified());
 
         // special getters
 
@@ -51,7 +58,7 @@ class SiteMapIndexTest extends TestCase
      */
     public function testPathAndUrlFix($path, $expectedPath, $url, $expectedUrl): void
     {
-        $unit = new SiteMapIndex($path, $url, 'name');
+        $unit = new SiteMap('group', $path, $url, 'name', null);
 
         $this->assertEquals($expectedPath, $unit->path());
         $this->assertEquals($expectedUrl, $unit->url());
@@ -71,14 +78,15 @@ class SiteMapIndexTest extends TestCase
      */
     public function testChangeNameMethod(string $name): void
     {
-        $unit = new SiteMapIndex('/tmp/sitemap/', 'http://example.com', 'name');
+        $unit = new SiteMap('group', '/tmp/sitemap/', 'http://example.com', 'name', null);
 
         // change name should return new instance of SiteMap object with only changed name
-        /** @var SiteMapIndex $siteMap */
+        /** @var SiteMap $siteMap */
         $siteMap = $unit->changeName($name);
 
         $this->assertNotSame($unit, $siteMap);
 
+        $this->assertEquals($unit->group(), $siteMap->group());
         $this->assertEquals($unit->path(), $siteMap->path());
         $this->assertEquals($unit->url(), $siteMap->url());
 

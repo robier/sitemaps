@@ -10,11 +10,17 @@ class XML extends Base
 {
     const EXTENSION = 'xml';
 
-    protected $writer;
+    const DATE = 'Y-m-d';
+    const DATETIME = \DateTime::W3C;
 
-    public function __construct(string $path, string $url)
+    protected $writer;
+    protected $dateFormat;
+
+    public function __construct(string $path, string $url, string $dateFormat = self::DATE)
     {
         parent::__construct($path, $url);
+
+        $this->dateFormat = $dateFormat;
 
         $this->writer = new XMLWriter();
     }
@@ -33,9 +39,8 @@ class XML extends Base
         $path = $this->name($this->path, $group, $index);
         $generator = $this->chunk($items, $path);
 
-        $index = 0;
         foreach ($generator as $chunk) {
-            $this->writer->writeSiteMap($path, $chunk);
+            $this->writer->writeSiteMap($path, $chunk, $this->dateFormat);
             yield new SiteMapFile($group, dirname($path), $this->url, basename($path));
 
             ++$index;
@@ -52,7 +57,7 @@ class XML extends Base
         $generator = $this->chunk($items, $path);
 
         foreach ($generator as $chunk) {
-            yield from $this->writer->writeSiteMapIndex($path, $chunk);
+            yield from $this->writer->writeSiteMapIndex($path, $chunk, $this->dateFormat);
             yield new SiteMapIndex(dirname($path), $this->url, basename($path));
 
             ++$index;

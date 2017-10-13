@@ -2,6 +2,8 @@
 
 namespace Robier\Sitemaps;
 
+use DateTimeInterface;
+
 class Location
 {
     protected const CHANGE_FREQUENCY = [
@@ -22,12 +24,12 @@ class Location
     /**
      * Item constructor.
      *
-     * @param string      $url
-     * @param float|null  $priority
+     * @param string $url
+     * @param float|null $priority
      * @param string|null $changeFrequency
-     * @param string|null $lastModified
+     * @param DateTimeInterface|null $lastModified
      */
-    public function __construct(string $url, float $priority = null, string $changeFrequency = null, string $lastModified = null)
+    public function __construct(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)
     {
         $this->validate($url, $priority, $changeFrequency, $lastModified);
 
@@ -37,7 +39,7 @@ class Location
         $this->lastModified = $lastModified;
     }
 
-    protected function validate(string $url, float $priority = null, string $changeFrequency = null, string $lastModified = null)
+    protected function validate(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new \InvalidArgumentException('Invalid url parameter');
@@ -77,9 +79,9 @@ class Location
     }
 
     /**
-     * @return null|string
+     * @return null|DateTimeInterface
      */
-    public function lastModified(): ?string
+    public function lastModified(): ?DateTimeInterface
     {
         return $this->lastModified;
     }

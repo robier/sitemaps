@@ -10,11 +10,13 @@ class LocationTest extends TestCase
 {
     public function dataProviderForGetters(): \Generator
     {
-        yield ['https://example.com/', 0.1,  'weekly', '2017-10-12'];
+        $dateTime = new \DateTime();
+
+        yield ['https://example.com/', 0.1,  'weekly', $dateTime];
         yield ['https://example.com/', 0.1,  'weekly',  null];
-        yield ['https://example.com/', 0.1,  null,     '2017-10-12'];
-        yield ['https://example.com/', null, 'weekly', '2017-10-12'];
-        yield ['https://example.com/', null, null,     '2017-10-12'];
+        yield ['https://example.com/', 0.1,  null,     $dateTime];
+        yield ['https://example.com/', null, 'weekly', $dateTime];
+        yield ['https://example.com/', null, null,     $dateTime];
         yield ['https://example.com/', 0.1,  null,     null];
         yield ['https://example.com/', null, 'weekly', null];
     }
