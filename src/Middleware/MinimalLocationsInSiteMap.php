@@ -6,8 +6,6 @@ namespace Robier\Sitemaps\Middleware;
  * Class MinimalLocationsInSiteMap
  *
  * If minimal locations are not meet, current sitemap will be skipped.
- *
- * @package Robier\Sitemaps\Processor\Location
  */
 class MinimalLocationsInSiteMap implements Contract
 {
@@ -23,6 +21,7 @@ class MinimalLocationsInSiteMap implements Contract
 
     /**
      * @param \Iterator $items
+     *
      * @return \Iterator
      */
     public function apply(\Iterator $items): \Iterator
@@ -30,16 +29,15 @@ class MinimalLocationsInSiteMap implements Contract
         $count = 1;
         $savedItems = [];
 
-        foreach ($items as $item){
-
-            if($count < $this->quantity){
+        foreach ($items as $item) {
+            if ($count < $this->quantity) {
                 $savedItems[] = $item;
                 ++$count;
                 continue;
             }
 
-            if(!empty($savedItems)){
-                foreach($savedItems as $savedItem){
+            if (!empty($savedItems)) {
+                foreach ($savedItems as $savedItem) {
                     // yield all collected items at once
                     yield $savedItem;
                 }

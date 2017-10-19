@@ -24,9 +24,9 @@ class Location
     /**
      * Item constructor.
      *
-     * @param string $url
-     * @param float|null $priority
-     * @param string|null $changeFrequency
+     * @param string                 $url
+     * @param float|null             $priority
+     * @param string|null            $changeFrequency
      * @param DateTimeInterface|null $lastModified
      */
     public function __construct(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)

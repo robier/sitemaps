@@ -145,6 +145,7 @@ class Generator implements \IteratorAggregate
      * robots.txt or will ping search engines providers.
      *
      * @param \Iterator $generator
+     *
      * @return \Iterator
      */
     protected function onlyEntryPointFiles(\Iterator $generator): \Iterator

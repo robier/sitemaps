@@ -9,6 +9,7 @@ interface Contract
 {
     /**
      * @param \Iterator $items
+     *
      * @return \Iterator
      */
     public function apply(\Iterator $items): \Iterator;

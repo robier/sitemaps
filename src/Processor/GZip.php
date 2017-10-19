@@ -8,7 +8,7 @@ class GZip implements Contract
 {
     protected const EXTENSION = 'gz';
     protected const COMPRESSION_LEVEL = 5;
-    protected const WRITE_CHUNK = 4096; // ~4 kB
+    protected const READ_CHUNK = 4096; // ~4 kB
 
     protected $compressionLevel;
 
@@ -39,7 +39,7 @@ class GZip implements Contract
         $fileHandle = fopen($item->fullPath(), 'rb');
 
         while (!feof($fileHandle)) {
-            gzwrite($gzipHandle, fread($fileHandle, 4096));
+            gzwrite($gzipHandle, fread($fileHandle, static::READ_CHUNK));
         }
 
         gzclose($gzipHandle);

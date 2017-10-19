@@ -3,12 +3,11 @@
 namespace Robier\Sitemaps\Tests\Unit\Middleware;
 
 use ArrayIterator;
-use Robier\Sitemaps\Middleware\MinimalLocationsInSiteMap;
 use PHPUnit\Framework\TestCase;
+use Robier\Sitemaps\Middleware\MinimalLocationsInSiteMap;
 
 class MinimalLocationsInSiteMapTest extends TestCase
 {
-
     /**
      * @dataProvider dataProvider
      */
@@ -16,12 +15,11 @@ class MinimalLocationsInSiteMapTest extends TestCase
     {
         $iterator = new MinimalLocationsInSiteMap($limit);
 
-        if($limit > $dataCount){
+        if ($limit > $dataCount) {
             $this->assertCount(0, $iterator->apply($data));
-        }else{
+        } else {
             $this->assertCount($dataCount, $iterator->apply($data));
         }
-
     }
 
     public function dataProvider()
@@ -32,5 +30,4 @@ class MinimalLocationsInSiteMapTest extends TestCase
         yield [5, 4, new ArrayIterator([1, 'test', 'data', 'another one'])];
         yield [1, 4, new ArrayIterator([1, 'test', 'data', 'another one'])];
     }
-
 }
