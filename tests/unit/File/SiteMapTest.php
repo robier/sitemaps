@@ -84,14 +84,6 @@ class SiteMapTest extends TestCase
         /** @var SiteMap $siteMap */
         $siteMap = $unit->changeName($name);
 
-        $this->assertNotSame($unit, $siteMap);
-
-        $this->assertEquals($unit->group(), $siteMap->group());
-        $this->assertEquals($unit->path(), $siteMap->path());
-        $this->assertEquals($unit->url(), $siteMap->url());
-
-        $this->assertNotEquals($unit->name(), $siteMap->name());
-        $this->assertNotEquals($unit->fullUrl(), $siteMap->fullUrl());
-        $this->assertNotEquals($unit->fullPath(), $siteMap->fullPath());
+        $this->assertSame($unit, $siteMap);
     }
 }
