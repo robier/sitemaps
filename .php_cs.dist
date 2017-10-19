@@ -3,7 +3,6 @@
 use PhpCsFixer\Fixer\Import\OrderedImportsFixer;
 
 $finder = PhpCsFixer\Finder::create()
-    ->notName('trusted_proxies.php')
     ->in([
         __DIR__ . '/src',
         __DIR__ . '/tests',

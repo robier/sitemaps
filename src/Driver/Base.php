@@ -29,9 +29,9 @@ abstract class Base
         return sprintf('%s%s-%s.%s', $prefix, $name, $suffix, static::EXTENSION);
     }
 
-    protected function chunk(\Iterator $iterator, string $filePath): FileChunk
+    protected function chunk(\Iterator $iterator): FileChunk
     {
-        return new FileChunk($iterator, $filePath, static::ITEMS_PER_FILE, static::BYTES_PER_FILE);
+        return new FileChunk($iterator, static::ITEMS_PER_FILE, static::BYTES_PER_FILE);
     }
 
     /**

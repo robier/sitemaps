@@ -16,15 +16,16 @@ class SiteMap implements Contract
     /**
      * Item constructor.
      *
-     * @param string      $group
-     * @param string      $path
-     * @param string      $url
-     * @param string      $name
+     * @param int                      $linksCount
+     * @param string                   $group
+     * @param string                   $path
+     * @param string                   $url
+     * @param string                   $name
      * @param string|DateTimeInterface $lastModified
      */
-    public function __construct(string $group, string $path, string $url, string $name, DateTimeInterface $lastModified = null)
+    public function __construct(int $linksCount, string $group, string $path, string $url, string $name, DateTimeInterface $lastModified = null)
     {
-        $this->traitConstructor($path, $url, $name);
+        $this->traitConstructor($linksCount, $path, $url, $name);
 
         $this->group = $group;
         $this->lastModified = $lastModified;
@@ -46,6 +47,13 @@ class SiteMap implements Contract
     public function changeName(string $name): Contract
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function changeSiteMapIndexFlag(bool $bool): Contract
+    {
+        $this->hasSiteMapIndex = $bool;
 
         return $this;
     }

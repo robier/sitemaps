@@ -5,6 +5,7 @@ namespace Robier\Sitemaps\Driver;
 use Robier\Sitemaps\Driver\Writer\XML as XMLWriter;
 use Robier\Sitemaps\File\SiteMap as SiteMapFile;
 use Robier\Sitemaps\File\SiteMapIndex;
+use Robier\Sitemaps\Iterators\Combined;
 
 class XML extends Base
 {
@@ -13,14 +14,19 @@ class XML extends Base
     const DATE = 'Y-m-d';
     const DATETIME = \DateTime::W3C;
 
+    protected const INDEX_FILE_SUFFIX = 'index';
+
     protected $writer;
     protected $dateFormat;
 
-    public function __construct(string $path, string $url, string $dateFormat = self::DATE)
+    protected $forceSiteMapIndexFiles;
+
+    public function __construct(string $path, string $url, string $dateFormat = self::DATE, bool $forceSiteMapIndexFiles = false)
     {
         parent::__construct($path, $url);
 
         $this->dateFormat = $dateFormat;
+        $this->forceSiteMapIndexFiles = $forceSiteMapIndexFiles;
 
         $this->writer = new XMLWriter();
     }
@@ -37,15 +43,14 @@ class XML extends Base
         $index = 0;
 
         $path = $this->name($this->path, $group, $index);
-        $generator = $this->chunk($items, $path);
+        $generator = $this->chunk($items);
 
-        foreach ($generator as $chunk) {
-            $this->writer->writeSiteMap($path, $chunk, $this->dateFormat);
-            yield new SiteMapFile($group, dirname($path), $this->url, basename($path));
+        foreach ($generator->file($path) as $chunk) {
+            $linksCount = $this->writer->writeSiteMap($path, $chunk, $this->dateFormat);
+            yield new SiteMapFile($linksCount, $group, dirname($path), $this->url, basename($path));
 
             ++$index;
             $path = $this->name($this->path, $group, $index);
-            $generator->file($path);
         }
     }
 
@@ -53,16 +58,50 @@ class XML extends Base
     {
         $index = 0;
 
-        $path = $this->name($this->path, $group, 'index' . $index);
-        $generator = $this->chunk($items, $path);
+        $path = $this->indexName($this->path, $group, $index);
+        $generator = $this->chunk($items);
 
-        foreach ($generator as $chunk) {
-            yield from $this->writer->writeSiteMapIndex($path, $chunk, $this->dateFormat);
-            yield new SiteMapIndex(dirname($path), $this->url, basename($path));
+        foreach ($generator->file($path) as $chunk) {
+            $siteMapIndexNeeded = true; // in any case this variable is overwritten in checkIfSiteMapIndexNeeded method
+            $siteMapItems = $this->checkIfSiteMapIndexNeeded($index, $chunk, $siteMapIndexNeeded);
+
+            if ($siteMapIndexNeeded) {
+                $siteMapIndexGenerator = $this->writer->writeSiteMapIndex($path, $siteMapItems, $this->dateFormat);
+                yield from $siteMapIndexGenerator;
+                yield new SiteMapIndex($siteMapIndexGenerator->getReturn(), dirname($path), $this->url, basename($path));
+            } else {
+                yield from $siteMapItems;
+            }
 
             ++$index;
-            $path = $this->name($this->path, $group, 'index' . $index);
-            $generator->file($path);
+            $path = $this->indexName($this->path, $group, $index);
         }
+    }
+
+    protected function checkIfSiteMapIndexNeeded(int $index, \Iterator $items, bool &$siteMapIndexNeededFlag): \Iterator
+    {
+        if (0 !== $index || $this->forceSiteMapIndexFiles) {
+            $siteMapIndexNeededFlag = true;
+
+            return $items;
+        }
+
+        $cachedItems = [];
+        $siteMapIndexNeededFlag = false;
+        foreach ($items as $item) {
+            if (count($cachedItems) > 1) {
+                $siteMapIndexNeededFlag = true;
+                break;
+            }
+
+            $cachedItems[] = $item;
+        }
+
+        return new Combined($cachedItems, $items);
+    }
+
+    protected function indexName(string $path, string $group, int $index): string
+    {
+        return $this->name($path, $group, static::INDEX_FILE_SUFFIX . $index);
     }
 }

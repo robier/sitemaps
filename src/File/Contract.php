@@ -2,7 +2,9 @@
 
 namespace Robier\Sitemaps\File;
 
-interface Contract
+use Countable;
+
+interface Contract extends Countable
 {
     public function name(): string;
 
@@ -13,6 +15,8 @@ interface Contract
     public function url(): string;
 
     public function fullUrl(): string;
+
+    public function hasSiteMapIndex(): bool;
 
     public function changeName(string $name): self;
 }

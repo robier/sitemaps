@@ -9,23 +9,27 @@ class SiteMapIndexTest extends TestCase
 {
     public function dataProviderForGetters(): \Generator
     {
-        yield ['/tmp/test/', 'http://google.com/', 'test-0'];
+        yield [5, '/tmp/test/', 'http://google.com/', 'test-0'];
     }
 
     /**
      * @dataProvider dataProviderForGetters
      *
+     * @param $count
      * @param $path
      * @param $url
      * @param $name
      */
-    public function testGetters($path, $url, $name): void
+    public function testGetters($count, $path, $url, $name): void
     {
-        $unit = new SiteMapIndex($path, $url, $name);
+        $unit = new SiteMapIndex($count, $path, $url, $name);
 
+        $this->assertCount($count, $unit);
+        $this->assertEquals($count, $unit->count());
         $this->assertEquals($path, $unit->path());
         $this->assertEquals($url, $unit->url());
         $this->assertEquals($name, $unit->name());
+        $this->assertFalse($unit->hasSiteMapIndex());
 
         // special getters
 
@@ -51,7 +55,7 @@ class SiteMapIndexTest extends TestCase
      */
     public function testPathAndUrlFix($path, $expectedPath, $url, $expectedUrl): void
     {
-        $unit = new SiteMapIndex($path, $url, 'name');
+        $unit = new SiteMapIndex(5, $path, $url, 'name');
 
         $this->assertEquals($expectedPath, $unit->path());
         $this->assertEquals($expectedUrl, $unit->url());
@@ -71,9 +75,8 @@ class SiteMapIndexTest extends TestCase
      */
     public function testChangeNameMethod(string $name): void
     {
-        $unit = new SiteMapIndex('/tmp/sitemap/', 'http://example.com', 'name');
+        $unit = new SiteMapIndex(5, '/tmp/sitemap/', 'http://example.com', 'name');
 
-        // change name should return new instance of SiteMap object with only changed name
         /** @var SiteMapIndex $siteMap */
         $siteMap = $unit->changeName($name);
 

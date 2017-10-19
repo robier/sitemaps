@@ -28,13 +28,14 @@ class XML
         $xml->endDocument();
     }
 
-    public function writeSiteMap(string $path, \Generator $locations, string $dateFormat): void
+    public function writeSiteMap(string $path, \Iterator $locations, string $dateFormat): int
     {
         $xml = $this->new($path);
 
         $xml->startElement('urlset');
         $xml->writeAttribute('xmlns', static::SCHEMA);
 
+        $count = 0;
         /** @var Location $location */
         foreach ($locations as $location) {
             $xml->startElement('url');
@@ -53,12 +54,15 @@ class XML
             }
 
             $xml->endElement();
+            ++$count;
         }
 
         $this->close($xml);
+
+        return $count;
     }
 
-    public function writeSiteMapIndex(string $path, \Generator $siteMaps, string $dateFormat): \Generator
+    public function writeSiteMapIndex(string $path, \Iterator $siteMaps, string $dateFormat): \Generator
     {
         $xml = $this->new($path);
 
@@ -66,7 +70,11 @@ class XML
         $xml->writeAttribute('xmlns', static::SCHEMA);
 
         /** @var SiteMap $siteMap */
+        $count = 0;
         foreach ($siteMaps as $siteMap) {
+            $siteMap->changeSiteMapIndexFlag(true);
+            yield $siteMap;
+
             $xml->startElement('url');
             $xml->writeElement('loc', $siteMap->fullUrl());
 
@@ -75,10 +83,11 @@ class XML
             }
 
             $xml->endElement();
-
-            yield $siteMap;
+            ++$count;
         }
 
         $this->close($xml);
+
+        return $count;
     }
 }

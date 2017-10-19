@@ -11,23 +11,26 @@ class SiteMapTest extends TestCase
     {
         $dateTime = new \DateTime();
 
-        yield ['test', '/tmp/test/', 'http://google.com/', 'test-0', null];
-        yield ['test', '/tmp/test/', 'http://google.com/', 'test-0', $dateTime];
+        yield [10, 'test', '/tmp/test/', 'http://google.com/', 'test-0', null];
+        yield [15, 'test', '/tmp/test/', 'http://google.com/', 'test-0', $dateTime];
     }
 
     /**
      * @dataProvider dataProviderForGetters
      *
+     * @param $count
      * @param $group
      * @param $path
      * @param $url
      * @param $name
      * @param $lastModified
      */
-    public function testGetters($group, $path, $url, $name, $lastModified): void
+    public function testGetters($count, $group, $path, $url, $name, $lastModified): void
     {
-        $unit = new SiteMap($group, $path, $url, $name, $lastModified);
+        $unit = new SiteMap($count, $group, $path, $url, $name, $lastModified);
 
+        $this->assertCount($count, $unit);
+        $this->assertEquals($count, $unit->count());
         $this->assertEquals($group, $unit->group());
         $this->assertEquals($path, $unit->path());
         $this->assertEquals($url, $unit->url());
@@ -38,6 +41,21 @@ class SiteMapTest extends TestCase
 
         $this->assertEquals($path . $name, $unit->fullPath());
         $this->assertEquals($url . $name, $unit->fullUrl());
+    }
+
+    public function testSettingSiteMapIndexFlag(): void
+    {
+        $unit = new SiteMap(3, 'test', '/tmp/', 'http://example.com/', 'test');
+
+        $this->assertFalse($unit->hasSiteMapIndex());
+
+        $this->assertSame($unit, $unit->changeSiteMapIndexFlag(true));
+
+        $this->assertTrue($unit->hasSiteMapIndex());
+
+        $this->assertSame($unit, $unit->changeSiteMapIndexFlag(false));
+
+        $this->assertFalse($unit->hasSiteMapIndex());
     }
 
     public function dataProviderForPathAndUrlFix(): \Generator
@@ -58,7 +76,7 @@ class SiteMapTest extends TestCase
      */
     public function testPathAndUrlFix($path, $expectedPath, $url, $expectedUrl): void
     {
-        $unit = new SiteMap('group', $path, $url, 'name', null);
+        $unit = new SiteMap(5, 'group', $path, $url, 'name', null);
 
         $this->assertEquals($expectedPath, $unit->path());
         $this->assertEquals($expectedUrl, $unit->url());
@@ -78,9 +96,8 @@ class SiteMapTest extends TestCase
      */
     public function testChangeNameMethod(string $name): void
     {
-        $unit = new SiteMap('group', '/tmp/sitemap/', 'http://example.com', 'name', null);
+        $unit = new SiteMap(5, 'group', '/tmp/sitemap/', 'http://example.com', 'name', null);
 
-        // change name should return new instance of SiteMap object with only changed name
         /** @var SiteMap $siteMap */
         $siteMap = $unit->changeName($name);
 

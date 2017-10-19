@@ -10,10 +10,9 @@ class FileChunk implements \Iterator
 
     protected $file;
 
-    public function __construct(\Iterator $iterator, string $filePath, int $maxItems, int $maxBytes)
+    public function __construct(\Iterator $iterator, int $maxItems, int $maxBytes)
     {
         $this->iterator = $iterator;
-        $this->file = $filePath;
         $this->maxBytes = $maxBytes - 100; // remove 100 bytes so we do not spill over $maxBites
         $this->maxItems = $maxItems;
     }

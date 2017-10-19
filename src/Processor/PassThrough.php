@@ -14,8 +14,13 @@ class PassThrough implements Contract
     public function apply(\Iterator $items): \Iterator
     {
         foreach ($items as $item) {
-            // we do not want to be able to edit any item data
-            call_user_func($this->processor, clone $item);
+            if (is_object($item)) {
+                // we do not want to be able to edit any item data
+                call_user_func($this->processor, clone $item);
+            } else {
+                call_user_func($this->processor, $item);
+            }
+
             yield $item;
         }
     }
