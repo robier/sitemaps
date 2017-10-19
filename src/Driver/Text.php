@@ -14,28 +14,30 @@ class Text extends Base
         $index = 0;
 
         $path = $this->name($this->path, $group, $index);
-        $generator = $this->chunk($items, $path);
+        $generator = $this->chunk($items);
 
-        $index = 0;
-        foreach ($generator as $chunk) {
-            $this->writeLinks($path, $chunk);
-            yield new SiteMapFile($group, dirname($path), $this->url, basename($path));
+        foreach ($generator->file($path) as $chunk) {
+            $count = $this->writeLinks($path, $chunk);
+            yield new SiteMapFile($count, $group, dirname($path), $this->url, basename($path));
 
             ++$index;
             $path = $this->name($this->path, $group, $index);
-            $generator->file($path);
         }
     }
 
-    protected function writeLinks($path, $chunks): void
+    protected function writeLinks($path, $chunks): int
     {
         $handle = fopen($path, 'w');
 
         /** @var Location $item */
+        $count = 0;
         foreach ($chunks as $item) {
             fwrite($handle, $item->url() . PHP_EOL);
+            ++$count;
         }
 
         fclose($handle);
+
+        return $count;
     }
 }
