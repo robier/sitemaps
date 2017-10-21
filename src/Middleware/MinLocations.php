@@ -3,11 +3,11 @@
 namespace Robier\Sitemaps\Middleware;
 
 /**
- * Class MinimalLocationsInSiteMap
+ * Class MinLocations
  *
  * If minimal locations are not meet, current sitemap will be skipped.
  */
-class MinimalLocationsInSiteMap implements Contract
+class MinLocations implements Contract
 {
     protected $quantity;
 
@@ -37,10 +37,7 @@ class MinimalLocationsInSiteMap implements Contract
             }
 
             if (!empty($savedItems)) {
-                foreach ($savedItems as $savedItem) {
-                    // yield all collected items at once
-                    yield $savedItem;
-                }
+                yield from $savedItems;
 
                 $savedItems = []; // free memory
             }
