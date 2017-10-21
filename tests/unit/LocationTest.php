@@ -12,13 +12,13 @@ class LocationTest extends TestCase
     {
         $dateTime = new \DateTime();
 
-        yield ['https://example.com/', 0.1,  'weekly', $dateTime];
-        yield ['https://example.com/', 0.1,  'weekly',  null];
-        yield ['https://example.com/', 0.1,  null,     $dateTime];
-        yield ['https://example.com/', null, 'weekly', $dateTime];
-        yield ['https://example.com/', null, null,     $dateTime];
-        yield ['https://example.com/', 0.1,  null,     null];
-        yield ['https://example.com/', null, 'weekly', null];
+        yield ['https://example.com/', 0.1,  'weekly', $dateTime, null];
+        yield ['https://example.com/', 0.1,  'weekly',  null, 'test'];
+        yield ['https://example.com/', 0.1,  null,     $dateTime, null];
+        yield ['https://example.com/', null, 'weekly', $dateTime, null];
+        yield ['https://example.com/', null, null,     $dateTime, 'example'];
+        yield ['https://example.com/', 0.1,  null,     null, null];
+        yield ['https://example.com/', null, 'weekly', null, null];
     }
 
     /**
@@ -28,15 +28,17 @@ class LocationTest extends TestCase
      * @param $priority
      * @param $changeFrequency
      * @param $lastModified
+     * @param $subGroup
      */
-    public function testGetters($url, $priority, $changeFrequency, $lastModified): void
+    public function testGetters($url, $priority, $changeFrequency, $lastModified, $subGroup): void
     {
-        $unit = new Location($url, $priority, $changeFrequency, $lastModified);
+        $unit = new Location($url, $priority, $changeFrequency, $lastModified, $subGroup);
 
         $this->assertEquals($url, $unit->url());
         $this->assertEquals($priority, $unit->priority());
         $this->assertEquals($changeFrequency, $unit->changeFrequency());
         $this->assertEquals($lastModified, $unit->lastModified());
+        $this->assertEquals($subGroup, $unit->subGroup());
     }
 
     public function dataProviderForValidationFail(): \Generator

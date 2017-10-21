@@ -2,6 +2,8 @@
 
 namespace Robier\Sitemaps\Iterators;
 
+use Robier\Sitemaps\Location;
+
 class FileChunk implements \Iterator
 {
     protected $iterator;
@@ -10,11 +12,15 @@ class FileChunk implements \Iterator
 
     protected $file;
 
+    protected $currentSubGroup = null;
+
     public function __construct(\Iterator $iterator, int $maxItems, int $maxBytes)
     {
         $this->iterator = $iterator;
         $this->maxBytes = $maxBytes - 100; // remove 100 bytes so we do not spill over $maxBites
         $this->maxItems = $maxItems;
+
+        $this->currentSubGroup = $iterator->valid() && $iterator->current() instanceof Location ? $iterator->current()->subGroup() : null;
     }
 
     public function file(string $path): self
@@ -26,6 +32,12 @@ class FileChunk implements \Iterator
 
     protected function validate(int $lineNumber): bool
     {
+        if ($this->iterator->current() instanceof Location && $this->iterator->current()->subGroup() !== $this->currentSubGroup) {
+            $this->currentSubGroup = $this->iterator->current()->subGroup();
+
+            return false;
+        }
+
         if ($lineNumber >= $this->maxItems) {
             return false;
         }
@@ -37,7 +49,7 @@ class FileChunk implements \Iterator
 
         clearstatcache(true, $this->file);
         if (!is_readable($this->file)) {
-            // file still not exists (1. iteration)
+            // file does not exists
             return true;
         }
 
@@ -70,11 +82,12 @@ class FileChunk implements \Iterator
      *
      * @return void any returned value is ignored
      *
+     * @see FileChunk::current()
      * @since 5.0.0
      */
     public function next(): void
     {
-        $this->iterator->next();
+        // we are doing $iterator->next() in current() method
     }
 
     /**

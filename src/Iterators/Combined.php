@@ -82,7 +82,7 @@ class Combined implements Iterator
             ++$this->currentItem;
         }
 
-        if ($this->data[$this->currentItem] instanceof \Iterator) {
+        if (isset($this->data[$this->currentItem])) {
             return $this->data[$this->currentItem]->valid();
         }
 

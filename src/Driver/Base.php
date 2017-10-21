@@ -3,8 +3,9 @@
 namespace Robier\Sitemaps\Driver;
 
 use Robier\Sitemaps\Iterators\FileChunk;
+use Robier\Sitemaps\Location;
 
-abstract class Base
+abstract class Base implements Contract
 {
     const ITEMS_PER_FILE = 50000;
     const BYTES_PER_FILE = 52000000; // ~50MB
@@ -24,25 +25,31 @@ abstract class Base
         }
     }
 
-    protected function name(string $prefix, string $name, string $suffix): string
+    protected function name(string $prefix, string $name, string $suffix, \Iterator $items = null): string
     {
-        return sprintf('%s%s-%s.%s', $prefix, $name, $suffix, static::EXTENSION);
+        $subGroup = null;
+        if (null !== $items) {
+            $subGroup = $this->subGroup($items);
+        }
+
+        if (null === $subGroup) {
+            return sprintf('%s%s-%s.%s', $prefix, $name, $suffix, static::EXTENSION);
+        }
+
+        return sprintf('%s%s-%s-%s.%s', $prefix, $name, $suffix, $subGroup, static::EXTENSION);
+    }
+
+    protected function subGroup(\Iterator $items): ?string
+    {
+        if (!$items->valid() || !($items->current() instanceof Location)) {
+            return null;
+        }
+
+        return $items->current()->subGroup();
     }
 
     protected function chunk(\Iterator $iterator): FileChunk
     {
         return new FileChunk($iterator, static::ITEMS_PER_FILE, static::BYTES_PER_FILE);
     }
-
-    /**
-     * Iterator must return instance of file contract
-     *
-     * @see \Robier\Sitemaps\File\Contract
-     *
-     * @param string    $group
-     * @param \Iterator $items
-     *
-     * @return \Iterator|\Robier\Sitemaps\File\SiteMap[]|\Robier\Sitemaps\File\SiteMapIndex[]
-     */
-    abstract public function write(string $group, \Iterator $items): \Iterator;
 }

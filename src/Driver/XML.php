@@ -42,7 +42,7 @@ class XML extends Base
     {
         $index = 0;
 
-        $path = $this->name($this->path, $group, $index);
+        $path = $this->name($this->path, $group, $index, $items);
         $generator = $this->chunk($items);
 
         foreach ($generator->file($path) as $chunk) {
@@ -50,7 +50,7 @@ class XML extends Base
             yield new SiteMapFile($linksCount, $group, dirname($path), $this->url, basename($path));
 
             ++$index;
-            $path = $this->name($this->path, $group, $index);
+            $path = $this->name($this->path, $group, $index, $items);
         }
     }
 
@@ -89,12 +89,12 @@ class XML extends Base
         $cachedItems = [];
         $siteMapIndexNeededFlag = false;
         foreach ($items as $item) {
+            $cachedItems[] = $item;
+
             if (count($cachedItems) > 1) {
                 $siteMapIndexNeededFlag = true;
                 break;
             }
-
-            $cachedItems[] = $item;
         }
 
         return new Combined($cachedItems, $items);

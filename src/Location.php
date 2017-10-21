@@ -20,6 +20,10 @@ class Location
     protected $priority;
     protected $changeFrequency;
     protected $lastModified;
+    /**
+     * @var string
+     */
+    protected $subGroup;
 
     /**
      * Item constructor.
@@ -28,8 +32,9 @@ class Location
      * @param float|null             $priority
      * @param string|null            $changeFrequency
      * @param DateTimeInterface|null $lastModified
+     * @param string|null            $subGroup
      */
-    public function __construct(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)
+    public function __construct(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null, string $subGroup = null)
     {
         $this->validate($url, $priority, $changeFrequency, $lastModified);
 
@@ -37,6 +42,7 @@ class Location
         $this->priority = $priority;
         $this->changeFrequency = $changeFrequency;
         $this->lastModified = $lastModified;
+        $this->subGroup = $subGroup;
     }
 
     protected function validate(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)
@@ -84,5 +90,13 @@ class Location
     public function lastModified(): ?DateTimeInterface
     {
         return $this->lastModified;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function subGroup(): ?string
+    {
+        return $this->subGroup;
     }
 }
