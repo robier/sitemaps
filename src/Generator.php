@@ -2,7 +2,7 @@
 
 namespace Robier\Sitemaps;
 
-use Robier\Sitemaps\Driver\Base as DriverContract;
+use Robier\Sitemaps\Driver\Contract as DriverContract;
 use Robier\Sitemaps\File\SiteMap;
 use Robier\Sitemaps\File\SiteMapIndex;
 use Robier\Sitemaps\Middleware\Contract as MiddlewareContract;
@@ -31,7 +31,10 @@ class Generator implements \IteratorAggregate
      */
     protected $middleware = [];
 
-    protected $data = [];
+    /**
+     * @var DataProvider[]
+     */
+    protected $dataProviders = [];
 
     /**
      * Generator constructor.
@@ -52,11 +55,11 @@ class Generator implements \IteratorAggregate
      */
     public function data(string $name, DataProvider $dataProvider, MiddlewareContract ...$middleware): self
     {
-        if (isset($this->data[$name])) {
+        if (isset($this->dataProviders[$name])) {
             throw new \InvalidArgumentException('Duplicated data provider name ' . $name);
         }
 
-        $this->data[$name] = $dataProvider;
+        $this->dataProviders[$name] = $dataProvider;
         $this->middleware[$name] = $middleware;
 
         return $this;
@@ -106,7 +109,7 @@ class Generator implements \IteratorAggregate
 
     public function generate(): \Iterator
     {
-        if (empty($this->data)) {
+        if (empty($this->dataProviders)) {
             throw new \LogicException('Can not generate sitemaps as no data is provided');
         }
 
@@ -114,7 +117,7 @@ class Generator implements \IteratorAggregate
          * @var string
          * @var DataProvider $data
          */
-        foreach ($this->data as $group => $data) {
+        foreach ($this->dataProviders as $group => $data) {
             $generator = $data->fetch();
 
             /** @var MiddlewareContract $middleware */
