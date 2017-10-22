@@ -93,6 +93,7 @@ class XML extends Base
 
             if (count($cachedItems) > 1) {
                 $siteMapIndexNeededFlag = true;
+                $items->next(); // so we do not have duplication of links in site maps
                 break;
             }
         }
