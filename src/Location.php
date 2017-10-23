@@ -36,7 +36,9 @@ class Location
      */
     public function __construct(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null, string $subGroup = null)
     {
-        $this->validate($url, $priority, $changeFrequency, $lastModified);
+        $this->validateUrl($url);
+        $this->validatePriority($priority);
+        $this->validateChangeFrequency($changeFrequency);
 
         $this->url = $url;
         $this->priority = $priority;
@@ -45,17 +47,31 @@ class Location
         $this->subGroup = $subGroup;
     }
 
-    protected function validate(string $url, float $priority = null, string $changeFrequency = null, DateTimeInterface $lastModified = null)
+    protected function validateUrl(string $url): void
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new \InvalidArgumentException('Invalid url parameter');
         }
+    }
 
-        if (null !== $priority && ($priority < 0 || $priority > 1)) {
-            throw new \InvalidArgumentException('Invalid priority parameter');
+    protected function validatePriority(float $priority = null): void
+    {
+        if (null === $priority) {
+            return;
         }
 
-        if (null !== $changeFrequency && !in_array($changeFrequency, static::CHANGE_FREQUENCY)) {
+        if ($priority < 0 || $priority > 1) {
+            throw new \InvalidArgumentException('Invalid priority parameter');
+        }
+    }
+
+    protected function validateChangeFrequency(string $changeFrequency = null): void
+    {
+        if (null === $changeFrequency) {
+            return;
+        }
+
+        if (!in_array($changeFrequency, static::CHANGE_FREQUENCY)) {
             throw new \InvalidArgumentException('Invalid change frequency parameter');
         }
     }
