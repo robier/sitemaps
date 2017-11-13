@@ -66,7 +66,7 @@ class XML
     {
         $xml = $this->new($path);
 
-        $xml->startElement('SiteMapIndexContract');
+        $xml->startElement('sitemapindex');
         $xml->writeAttribute('xmlns', static::SCHEMA);
 
         /** @var SiteMap $siteMap */
