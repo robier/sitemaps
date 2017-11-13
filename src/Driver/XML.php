@@ -103,6 +103,6 @@ class XML extends Base
 
     protected function indexName(string $path, string $group, int $index): string
     {
-        return $this->name($path, $group, static::INDEX_FILE_SUFFIX . $index);
+        return $this->name($path, $group, static::INDEX_FILE_SUFFIX . '-' . $index);
     }
 }
