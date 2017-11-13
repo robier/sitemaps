@@ -75,7 +75,7 @@ class XML
             $siteMap->changeSiteMapIndexFlag(true);
             yield $siteMap;
 
-            $xml->startElement('url');
+            $xml->startElement('sitemap');
             $xml->writeElement('loc', $siteMap->fullUrl());
 
             if ($siteMap->lastModified()) {
